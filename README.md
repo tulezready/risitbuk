@@ -30,3 +30,6 @@ Change files, bump VERSION in sw.js (risitbuk-v1 → risitbuk-v2), upload to the
 - Availability: works offline through the service worker.
 
 Limit to know: clearing the browser's data removes saved documents and business details. Sent PDFs stay in the user's WhatsApp.
+
+## Deploys
+This repo is connected to the Cloudflare Worker **risitbuk**. Every push to `main` builds and deploys automatically (`npx wrangler deploy`, config in wrangler.jsonc).
