@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Risit Buk</title>
+<meta name="description" content="Free receipt, invoice and quotation maker for PNG small businesses. Make a proper document on your phone and send it as a PDF on WhatsApp.">
+<meta name="theme-color" content="#1d3a6b">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png" type="image/png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Risit Buk">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Risit Buk — Receipts & invoices on your phone">
+<meta property="og:description" content="Make proper receipts, invoices and quotes in kina. Send them as a PDF on WhatsApp. Free for PNG businesses.">
+<meta property="og:url" content="https://risitbuk.pages.dev/">
+<meta property="og:image" content="https://risitbuk.pages.dev/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="brand"><div class="mark" aria-hidden="true">R<span></span></div><div><h1>Risit Buk</h1><div class="tag">Receipts Receipts, invoices &amp; quotesamp; invoices</div></div></div>
+    <nav class="nav">
+      <button type="button" id="nav-new">New</button>
+      <button type="button" id="nav-list">Saved <b id="saved-count">0</b></button>
+    </nav>
+  </header>
+
+  <div class="install" id="install" hidden>
+    <p id="install-msg">Add Risit Buk to your phone. It works with no data too.</p>
+    <button type="button" id="install-go">Install</button>
+    <button type="button" class="x" id="install-x" aria-label="Close">×</button>
+  </div>
+
+  <!-- EDIT -->
+  <main id="v-edit">
+    <div class="seg" role="group" aria-label="Document type">
+      <button type="button" data-type="receipt">Receipt</button>
+      <button type="button" data-type="invoice">Invoice</button>
+      <button type="button" data-type="quote">Quote</button>
+    </div>
+
+    <details class="card" id="biz-card">
+      <summary><span><b>Your business</b><small id="biz-sum"></small></span><i aria-hidden="true">›</i></summary>
+      <p class="hint" id="biz-example" hidden>These are example details. Put in your own business and they'll be saved for every document.</p>
+      <div class="grid">
+        <label class="full">Business name<input id="b-name" maxlength="60" autocomplete="organization"></label>
+        <label class="full">Address / location<input id="b-addr" maxlength="90"></label>
+        <label>Phone<input id="b-phone" maxlength="30" inputmode="tel"></label>
+        <label>Email<input id="b-email" maxlength="60" inputmode="email"></label>
+        <label>IPA registration no.<input id="b-ipa" maxlength="30"></label>
+        <label>IRC TIN<input id="b-tin" maxlength="20"></label>
+        <label class="check full"><input type="checkbox" id="b-gst"> Registered for GST (adds 10% GST and shows "Tax Invoice")</label>
+        <div class="full logo-row">
+          <div class="logo-box" id="logo-box">No logo</div>
+          <div class="logo-btns">
+            <label class="filebtn">Add logo<input type="file" id="b-logo" accept="image/png,image/jpeg,image/webp"></label>
+            <button type="button" class="link" id="b-logo-x" hidden>Remove logo</button>
+          </div>
+        </div>
+        <p class="sub full">Payment details (shown on invoices)</p>
+        <label class="full">Bank / mobile money<input id="b-bank" maxlength="50" placeholder="e.g. BSP Kokopo"></label>
+        <label>Account name<input id="b-accname" maxlength="60"></label>
+        <label>Account no.<input id="b-accno" maxlength="30" inputmode="numeric"></label>
+      </div>
+      <p class="hint">Saved on this phone only.</p>
+    </details>
+
+    <section class="card">
+      <h2 id="cust-h">Customer</h2>
+      <div class="grid">
+        <label class="full">Name<input id="c-name" maxlength="60"></label>
+        <label>Phone<input id="c-phone" maxlength="30" inputmode="tel"></label>
+        <label>Address<input id="c-addr" maxlength="90"></label>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Items</h2>
+      <div id="items" class="items"></div>
+      <button type="button" class="add" id="add-item">+ Add item</button>
+      <div class="sums" id="sums"></div>
+    </section>
+
+    <section class="card">
+      <h2>Details</h2>
+      <div class="grid">
+        <label>Number<input id="d-no" readonly tabindex="-1"></label>
+        <label>Date<input id="d-date" type="date"></label>
+        <label id="due-wrap"><span id="due-lbl">Due date</span><input id="d-due" type="date"></label>
+        <label id="paid-wrap">Paid by
+          <select id="d-paid">
+            <option>Cash</option><option>Bank transfer</option><option>Mobile money</option><option>EFTPOS card</option><option>Cheque</option>
+          </select>
+        </label>
+        <label id="ref-wrap" class="full">Payment reference (optional)<input id="d-ref" maxlength="40"></label>
+        <label class="full">Notes (optional)<textarea id="d-notes" maxlength="300" rows="2"></textarea></label>
+      </div>
+    </section>
+
+    <div class="bar">
+      <div><small id="bar-lbl">Total</small><b id="bar-total">K0.00</b></div>
+      <button type="button" id="go-preview">Preview</button>
+    </div>
+  </main>
+
+  <!-- PREVIEW -->
+  <main id="v-preview" hidden>
+    <div class="ptools">
+      <button type="button" class="ghost" id="p-back">‹ Edit</button>
+      <button type="button" id="p-share">Send PDF</button>
+      <button type="button" class="ghost" id="p-pdf">Download</button>
+    </div>
+    <p class="hint" id="p-msg" hidden></p>
+    <div class="docframe" id="doc-frame"><div id="doc-view"></div></div>
+  </main>
+
+  <!-- LIST -->
+  <main id="v-list" hidden>
+    <div class="lhead"><h2>Saved documents</h2><div class="filters" id="filters"></div></div>
+    <div id="list" class="list"></div>
+  </main>
+
+  <footer class="foot">
+    <span>Free from <b>Ready Digital Consultancy</b>, Kokopo · 70254566</span>
+    <span>Need your business registered with IPA or a TIN? Call us.</span>
+  </footer>
+</div>
+<div id="doc-print" aria-hidden="true"></div>
+<div class="toast" id="toast" hidden></div>
+<script src="vendor/html2canvas.min.js"></script>
+<script src="vendor/jspdf.umd.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
