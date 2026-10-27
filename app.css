@@ -171,3 +171,5 @@ textarea{resize:vertical}
 .doc .df .thx{font:700 16px var(--display);color:#141c2b}
 .doc .sign{width:200px;border-top:1px solid #141c2b;padding-top:4px;text-align:center;font-size:11px;color:#6b7485;margin-top:30px}
 @media (prefers-reduced-motion:reduce){summary i{transition:none}}
+
+.appicon{width:40px;height:40px;border-radius:10px;flex:0 0 auto}

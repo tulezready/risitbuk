@@ -86,14 +86,21 @@ function bindEditor(){
   for(const k in bizFields)$(bizFields[k]).addEventListener("input",e=>{S.biz[k]=e.target.value;if(S.biz.example){S.biz.example=false;$("biz-example").hidden=true}refreshType();persist()});
   $("b-gst").addEventListener("change",e=>{S.biz.gst=e.target.checked;if(e.target.checked&&!S.biz.tin)toast("GST-registered businesses must show their TIN. Add it above.");refreshType();persist()});
   $("b-logo").addEventListener("change",e=>{const f=e.target.files&&e.target.files[0];e.target.value="";if(!f)return;
-    if(!/^image\/(png|jpeg|webp)$/.test(f.type)){toast("Use a PNG or JPG picture for the logo.");return}
-    if(f.size>8*1024*1024){toast("That picture is too big. Use one under 8 MB.");return}
-    const url=URL.createObjectURL(f),img=new Image();
-    img.onload=()=>{ // redraw on a canvas: shrinks it and strips hidden photo data (location etc.)
-      const m=360,sc=Math.min(1,m/Math.max(img.width,img.height)),c=document.createElement("canvas");
-      c.width=Math.round(img.width*sc);c.height=Math.round(img.height*sc);c.getContext("2d").drawImage(img,0,0,c.width,c.height);
-      S.biz.logo=c.toDataURL("image/png");URL.revokeObjectURL(url);S.biz.example=false;$("biz-example").hidden=true;renderLogo();persist();toast("Logo added")};
-    img.onerror=()=>{URL.revokeObjectURL(url);toast("Couldn't read that picture. Try another one.")};img.src=url});
+    // phones' file pickers sometimes report no type, so also accept by file name
+    const okType=/^image\//.test(f.type)||(!f.type&&/\.(png|jpe?g|webp|gif)$/i.test(f.name||""));
+    if(!okType){toast("Use a PNG or JPG picture for the logo.");return}
+    if(f.size>10*1024*1024){toast("That picture is too big. Use one under 10 MB.");return}
+    const fail=()=>toast("Couldn't read that picture. Save it as PNG or JPG and try again.");
+    const rd=new FileReader(); // read as a data: link, which the security policy allows (blob: links are blocked)
+    rd.onerror=fail;
+    rd.onload=()=>{const img=new Image();
+      img.onload=()=>{ // redraw on a canvas: shrinks it and strips hidden photo data (location etc.)
+        if(!img.width||!img.height){fail();return}
+        const m=360,sc=Math.min(1,m/Math.max(img.width,img.height)),c=document.createElement("canvas");
+        c.width=Math.max(1,Math.round(img.width*sc));c.height=Math.max(1,Math.round(img.height*sc));c.getContext("2d").drawImage(img,0,0,c.width,c.height);
+        S.biz.logo=c.toDataURL("image/png");S.biz.example=false;$("biz-example").hidden=true;renderLogo();persist();toast("Logo added")};
+      img.onerror=fail;img.src=String(rd.result)};
+    rd.readAsDataURL(f)});
   $("b-logo-x").onclick=()=>{S.biz.logo="";renderLogo();persist()};
   [["c-name","name"],["c-phone","phone"],["c-addr","addr"]].forEach(([id,k])=>$(id).addEventListener("input",e=>{D().cust[k]=e.target.value;persist()}));
   $("d-date").addEventListener("change",e=>{D().date=e.target.value||today();persist()});

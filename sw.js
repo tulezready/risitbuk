@@ -1,6 +1,6 @@
 // Risit Buk service worker: keeps the app working with no data.
 // Bump VERSION whenever you upload changed files so phones pick up the update.
-const VERSION = "risitbuk-v2";
+const VERSION = "risitbuk-v5";
 const FILES = [
   "./", "index.html", "app.css", "app.js", "manifest.webmanifest",
   "vendor/html2canvas.min.js", "vendor/jspdf.umd.min.js",
